@@ -4,8 +4,15 @@ from socket import (
     SOCK_STREAM
 )
 
-from bot import Bot
+async def communicate (cli):
+        # Text input from user
+        command = input("You: ")
 
+        # Convert input from string to bytes
+        response = command.encode()
+
+        # Send response to server
+        client_socket.sendall(response)
 
 # Client-object
 class Client:
@@ -21,14 +28,11 @@ class Client:
         # Connect to server
         client_socket.connect((self.ip, self.port))
 
-        # Message received, reading at most 1024-bytes
-        message = client_socket.recv(1024)
-
-        # Decode received message to ASCII from bytes format
-        print(message.decode())
-
         if not self.bot:
             while True:
+                message = client_socket.recv(1024)
+                print(message.decode())
+
                 # Text input from user
                 command = input("You: ")
 
@@ -39,5 +43,6 @@ class Client:
                 client_socket.sendall(response)
 
         if self.bot == "Minh":
-            message = Bot.minh_bot().encode()
-            client_socket.sendall(message)
+            while True:
+                message = client_socket.recv(1024)
+                print(message.decode())

@@ -1,32 +1,38 @@
-from socket import (
-    socket,
-    AF_INET,
-    SOCK_STREAM
-)
-
 import asyncio
-
-async def client_handler(client):
-    loop = asyncio.get_event_loop()  # Define
-    request = None  # Data from client
-    while request != 'quit': # If user write "quit" exit
-        request = await loop.sock_recv(client, 255)
-        response = request.decode()
-        await loop.sock_sendall(client, response.encode())
+import socket
 
 
-status = None
-server_socket = socket(AF_INET, SOCK_STREAM)  # Socket object for server
-server_socket.bind(('127.0.0.1', 2345))  # Assign IP-address and port
-server_socket.listen(4)
+async def client_handler(client, i, cli_list):
+    loop = asyncio.get_event_loop()
+    request = None
+    while request != 'quit':
+        request = (await loop.sock_recv(client, 1024)).decode()
+        print(f"Client{i}: {request}")
+        for cli in cli_list:
+            if cli != client:
+                await loop.sock_sendall(cli, request.encode())
+    client.close()
 
-while status != 'quit':
-    print("Waiting...")
-    client, address = server_socket.accept()
-    print(f"Connection established - {address}")
-    client.send("Test".encode())
-    message_coded = client.recv(1024)
-    status = message_coded.decode()
-    print(status)
 
-client.close()
+async def run_server():
+
+    cli_list = []
+
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(('localhost', 2345))
+    server.listen(4)
+    server.setblocking(False)
+
+    loop = asyncio.get_event_loop()
+    i = 1
+    while True:
+        print("Waiting for new connection...\n")
+        client, address = await loop.sock_accept(server)
+        cli_list.append(client)
+        print(f"Connection established - {address} \n")  # Print message to cons
+        client.send("Connection has been established!".encode())
+        loop.create_task(client_handler(client, i, cli_list))
+        i += 1
+
+
+asyncio.run(run_server())
