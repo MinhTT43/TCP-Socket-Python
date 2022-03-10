@@ -51,6 +51,13 @@ class Client:
                     response = Bot.charlie(message)
                     client_socket.sendall(response.encode())
 
-
+        if self.bot == "Chong":
+            while message != 'quit':
+                message_coded = client_socket.recv(1024)
+                message = message_coded.decode('utf-8')
+                print("Input: " + message)
+                if message:
+                    response = Bot.chong(message)
+                    client_socket.sendall(response.encode())
 
         sys.exit("User terminated connection, bot disconnecting")
