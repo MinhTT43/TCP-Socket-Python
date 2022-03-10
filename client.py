@@ -4,15 +4,10 @@ from socket import (
     SOCK_STREAM
 )
 
-async def communicate (cli):
-        # Text input from user
-        command = input("You: ")
+import sys
 
-        # Convert input from string to bytes
-        response = command.encode()
+from bot import Bot
 
-        # Send response to server
-        client_socket.sendall(response)
 
 # Client-object
 class Client:
@@ -28,21 +23,34 @@ class Client:
         # Connect to server
         client_socket.connect((self.ip, self.port))
 
+        message = None
+        command = None
+
+
         if not self.bot:
-            while True:
+            while command != 'quit':
                 message = client_socket.recv(1024)
                 print(message.decode())
 
                 # Text input from user
-                command = input("You: ")
+                command = input("Me: ")
 
                 # Convert input from string to bytes
                 response = command.encode()
 
                 # Send response to server
                 client_socket.sendall(response)
+            sys.exit("Connection terminated")
 
-        if self.bot == "Minh":
-            while True:
-                message = client_socket.recv(1024)
-                print(message.decode())
+        if self.bot == "Charlie":
+            while message != 'quit':
+                message_coded = client_socket.recv(1024)
+                message = message_coded.decode('utf-8')
+                print("Input: " + message)
+                if message:
+                    response = Bot.charlie(message)
+                    client_socket.sendall(response.encode())
+
+
+
+        sys.exit("User terminated connection, bot disconnecting")
