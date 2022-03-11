@@ -1,61 +1,39 @@
 import random
 
 
-def make_list(message):
-    return message.split()
+def response(message, verbs):
+    words = message.split()
+    for word in words:
+        for verb in verbs:
+            if word.lower() == verb.lower():
+                return verb.lower(), True
+
+    return False, None
 
 
 class Bot:
     def charlie(self):
-        if self == 'quit':
-            return "quit"
+        verbs = ["fly", "travel", "sail", "diving"]
+        word, exist = response(self, verbs)
+        if exist:
+            return f"Charlie: {word} sounds fun!"
         else:
-            exist = False
-            word_list = make_list(self)
-            verbs = ["Hamburger", "Kebab", "Pizza"]
-            for word in word_list:
-                for verb in verbs:
-                    if word == verb:
-                        exist = True
-                        action = str(verb)
-
-            if exist:
-                return f"Charlie: {action} sounds hella good "
-            else:
-                return "Charlie: Yuk🤮 "
+            return "Charlie: If it ain't travelrelated count me out"
 
     def chuck(self):
-            if self == 'quit':
-                return "quit"
-            else:
-                exist = False
-                word_list = make_list(self)
-                verbs = ['Kill', 'Torture', 'Drown']
-                for word in word_list:
-                    for verb in verbs:
-                        if word == verb:
-                            exist = True
-                            action = str(verb)
-
-                if exist:
-                    return f"Chuck: Can't you come up with anything else than {action}"
-                else:
-                    return "Chuck: Get your softass outta here "
+        verbs = ["fly", "travel", "sail", "diving"]
+        alternatives = ["sing", "code", "swim"]
+        alternative = random.choice(alternatives)
+        word, exist = response(self, verbs)
+        if exist:
+            return f"Chuck: Depends on where we are {word}ing !"
+        else:
+            return f"Chuck: Why dont we {alternative} instead?"
 
     def chong(self):
-            if self == 'quit':
-                return "quit"
-            else:
-                exist = False
-                word_list = make_list(self)
-                verbs = ['Bench', 'Deadlift', 'Rows']
-                for word in word_list:
-                    for verb in verbs:
-                        if word == verb:
-                            exist = True
-                            action = str(verb)
-
-                if exist:
-                    return f"Chong: LETS DO {action}!"
-                else:
-                    return "Chong: Lets hit the gym bro"
+        verbs = ["workout", "lift", "eat"]
+        word, exist = response(self, verbs)
+        if exist:
+            return f"Kevn: Im not sure about {word}ing!"
+        else:
+            return f"Kevin: I'd prefere working out"
