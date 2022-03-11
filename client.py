@@ -1,13 +1,8 @@
-from socket import (
-    socket,
-    AF_INET,
-    SOCK_STREAM
-)
-
+from pickle import FALSE
+import socket
 import sys
-
 from bot import Bot
-
+import time
 
 # Client-object
 class Client:
@@ -17,16 +12,15 @@ class Client:
         self.bot = bot
 
     def connect(self):
-        # Instantiate client socket
-        client_socket = socket(AF_INET, SOCK_STREAM)
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create client socket
+        client_socket.connect((self.ip, self.port))  # connect client socket to server
 
-        # Connect to server
-        client_socket.connect((self.ip, self.port))
+        message = None  # response variable
+        command = None  # user message variable
 
-        message = None
-        command = None
-
-        if not self.bot:
+        # user
+        # if bot-parameter == false then it is the user
+        if not self.bot: 
             message = client_socket.recv(1024)
             print(message.decode())
 
@@ -36,37 +30,33 @@ class Client:
 
                 # Convert input from string to bytes
                 response = ("Me: " + command).encode()
-
-                # Send response to server
                 client_socket.sendall(response)
-                
-                for x in range(2):
-                    message = client_socket.recv(1024)
-                    print(message.decode())
+
+                for i in range(3):
+                    
+                    message = client_socket.recv(1024).decode()
+                    print(message)
+                print("\n")
             sys.exit("Connection terminated")
 
-        if self.bot == "Charlie":
+        # bot
+        # if bot-parameter is a string then it is a bot where name is given
+        if str(self.bot):
             while True:
                 message_coded = client_socket.recv(1024)
                 message = message_coded.decode('utf-8')
                 print(message)
-                if message == 'quit':
-                    client_socket.sendall('quit'.encode())
-                    sys.exit("Connection terminated")
-                if "Me: " in message:
-                    response = Bot.charlie(message)
-                    client_socket.sendall(response.encode())
+                if message == 'Me: quit':
+                    sys.exit("User terminated session")
 
-        if self.bot == "Chuck":
-            while message != 'quit':
-                message_coded = client_socket.recv(1024)
-                message = message_coded.decode('utf-8')
-                print(message)
-                if message == 'quit':
-                    client_socket.sendall('quit'.encode())
-                    sys.exit("Connection terminated")
-                if "Me: " in message:
-                    response = Bot.chuck(message)
+                if "Me: " in message: # checks if user has sent message
+                    if self.bot == "Charlie":
+                        response = Bot.charlie(message)
+                    elif self.bot == "Chuck": 
+                        response = Bot.chuck(message)
+                    elif self.bot == "Chong":
+                        response = Bot.chong(message)
+                        
                     client_socket.sendall(response.encode())
 
         sys.exit("User terminated connection, bot disconnecting")

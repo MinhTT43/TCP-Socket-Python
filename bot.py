@@ -41,3 +41,21 @@ class Bot:
                     return f"Chuck: Can't you come up with anything else than {action}"
                 else:
                     return "Chuck: Get your softass outta here "
+
+    def chong(self):
+            if self == 'quit':
+                return "quit"
+            else:
+                exist = False
+                word_list = make_list(self)
+                verbs = ['Bench', 'Deadlift', 'Rows']
+                for word in word_list:
+                    for verb in verbs:
+                        if word == verb:
+                            exist = True
+                            action = str(verb)
+
+                if exist:
+                    return f"Chong: LETS DO {action}!"
+                else:
+                    return "Chong: Lets hit the gym bro"

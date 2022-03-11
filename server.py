@@ -1,6 +1,7 @@
 import asyncio
 import socket
-import sys
+import time
+
 
 async def client_handler(client, cli_list):
     loop = asyncio.get_event_loop()
@@ -8,12 +9,10 @@ async def client_handler(client, cli_list):
     while request != 'quit':
         request = (await loop.sock_recv(client, 1024)).decode()
         print(request)
-        if request:
-            for cli in cli_list:
-                if cli != client:
-                    cli.sendall(request.encode())
-
-    sys.exit("User ended connecetion")
+        for cli in cli_list:
+            if cli != client:
+                time.sleep(0.5)
+                await loop.sock_sendall(cli, request.encode())
 
 
 async def run_server():
@@ -21,7 +20,7 @@ async def run_server():
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(('localhost', 2345))
-    server.listen(1)
+    server.listen(4)
     server.setblocking(False)
 
     loop = asyncio.get_event_loop()
