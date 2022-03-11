@@ -2,20 +2,18 @@ import asyncio
 import socket
 import sys
 
-
 async def client_handler(client, cli_list):
     loop = asyncio.get_event_loop()
     request = None
     while request != 'quit':
         request = (await loop.sock_recv(client, 1024)).decode()
         print(request)
-        for cli in cli_list:
-            if cli != client:
-                await loop.sock_sendall(cli, request.encode())
+        if request:
+            for cli in cli_list:
+                if cli != client:
+                    cli.sendall(request.encode())
 
-    print(f"{client} has disconnected")
-    cli_list.remove(client)  # Remove disconnected client from list
-    client.close()  # Close client
+    sys.exit("User ended connecetion")
 
 
 async def run_server():
@@ -23,7 +21,7 @@ async def run_server():
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(('localhost', 2345))
-    server.listen(4)
+    server.listen(1)
     server.setblocking(False)
 
     loop = asyncio.get_event_loop()

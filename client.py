@@ -26,38 +26,47 @@ class Client:
         message = None
         command = None
 
-
         if not self.bot:
-            while command != 'quit':
-                message = client_socket.recv(1024)
-                print(message.decode())
+            message = client_socket.recv(1024)
+            print(message.decode())
 
+            while command != 'quit':
                 # Text input from user
                 command = input("Me: ")
 
                 # Convert input from string to bytes
-                response = command.encode()
+                response = ("Me: " + command).encode()
 
                 # Send response to server
                 client_socket.sendall(response)
+                
+                for x in range(2):
+                    message = client_socket.recv(1024)
+                    print(message.decode())
             sys.exit("Connection terminated")
 
         if self.bot == "Charlie":
-            while message != 'quit':
+            while True:
                 message_coded = client_socket.recv(1024)
                 message = message_coded.decode('utf-8')
-                print("Input: " + message)
-                if message:
+                print(message)
+                if message == 'quit':
+                    client_socket.sendall('quit'.encode())
+                    sys.exit("Connection terminated")
+                if "Me: " in message:
                     response = Bot.charlie(message)
                     client_socket.sendall(response.encode())
 
-        if self.bot == "Chong":
+        if self.bot == "Chuck":
             while message != 'quit':
                 message_coded = client_socket.recv(1024)
                 message = message_coded.decode('utf-8')
-                print("Input: " + message)
-                if message:
-                    response = Bot.chong(message)
+                print(message)
+                if message == 'quit':
+                    client_socket.sendall('quit'.encode())
+                    sys.exit("Connection terminated")
+                if "Me: " in message:
+                    response = Bot.chuck(message)
                     client_socket.sendall(response.encode())
 
         sys.exit("User terminated connection, bot disconnecting")
