@@ -1,7 +1,7 @@
 import random
 
 
-def response(message, verbs):
+def extract(message, verbs):
     words = message.split()
     for word in words:
         for verb in verbs:
@@ -14,7 +14,7 @@ def response(message, verbs):
 class Bot:
     def charlie(self):
         verbs = ["fly", "travel", "sail", "diving"]
-        word, exist = response(self, verbs)
+        word, exist = extract(self, verbs)
         if exist:
             return f"Charlie: {word} sounds fun!"
         else:
@@ -24,7 +24,7 @@ class Bot:
         verbs = ["fly", "travel", "sail", "diving"]
         alternatives = ["sing", "code", "swim"]
         alternative = random.choice(alternatives)
-        word, exist = response(self, verbs)
+        word, exist = extract(self, verbs)
         if exist:
             return f"Chuck: Depends on where we are {word}ing !"
         else:
@@ -32,7 +32,7 @@ class Bot:
 
     def chong(self):
         verbs = ["workout", "lift", "eat"]
-        word, exist = response(self, verbs)
+        word, exist = extract(self, verbs)
         if exist:
             return f"Kevn: Im not sure about {word}ing!"
         else:

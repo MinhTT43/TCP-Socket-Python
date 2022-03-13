@@ -12,7 +12,8 @@ async def client_handler(client, cli_list):
         for cli in cli_list:
             if cli != client:
                 time.sleep(0.5)
-                await loop.sock_sendall(cli, request.encode())
+
+    return False
 
 
 async def run_server():
@@ -24,14 +25,20 @@ async def run_server():
     server.setblocking(False)
 
     loop = asyncio.get_event_loop()
+    x = True
 
     while True:
+
         print("Waiting for new connection...\n")
         client, address = await loop.sock_accept(server)
         cli_list.append(client)
-        print(f"Connection established - {address} \n")  # Print message to cons
+        # Print message to cons
+        print(f"Connection established - {address} \n")
         client.send("Connection has been established!".encode())
-        loop.create_task(client_handler(client, cli_list))
+        x = loop.create_task(client_handler(client, cli_list))
+
+        if x == False:
+            server.close()
 
 
 asyncio.run(run_server())
